@@ -48,3 +48,31 @@ Route::post('/tasks', function (Request $request) {
 
     return redirect()->route('tasks.show', ['id'=> $task->id])->with('success','Task create successfully!');
 })->name('tasks.store');
+
+
+//edit task list
+Route::get('/tasks/{id}/edit', function($id) {
+    return view('edit', [
+        'task'=> ModelsTask::where('id', $id)->first()
+    ]);
+})->name('tasks.edit');
+
+
+Route::put('/tasks/{id}', function ($id, Request $request) {
+$data = $request->validate(
+        [
+            'title'=> 'required|max:255',
+            'description'=> 'required',
+            'long_description'=> 'required',
+        ]
+        );
+
+    $task = ModelsTask::where('id', $id)->first();
+    $task->title = $data['title'];
+    $task->description = $data['description'];
+    $task->long_description = $data['long_description'];
+    $task->save();
+
+    return redirect()->route('tasks.show', ['id' => $task->id])->with('success','Task updated successfully!');
+
+})->name('tasks.update');
