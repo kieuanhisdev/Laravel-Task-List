@@ -18,7 +18,7 @@ Route::get('/', function () {
 // 1. Hiển thị danh sách task
 Route::get('/tasks', function () {
     return view('index', [
-        'tasks' => Task::orderBy('id', 'desc')->get()
+        'tasks' => Task::orderBy('id', 'desc')->paginate(5)
     ]);
 })->name('tasks.index');
 
@@ -26,8 +26,8 @@ Route::get('/tasks', function () {
 Route::view('/tasks/create', 'create')->name('tasks.create');
 
 // 3. Lưu task mới
-Route::post('/tasks', function (Request $request) {
-    $task = Task::create($request->validate());
+Route::post('/tasks', function (TaskRequest $request) {
+    $task = Task::create($request->validated());
     return redirect()->route('tasks.show', ['task' => $task->id])
         ->with('success', 'Task created successfully!');
 })->name('tasks.store');
